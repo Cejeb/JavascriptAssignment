@@ -30,7 +30,6 @@
         <!--Allows me to enable touch screen controls-->
         <script src="https://code.jquery.com/pep/0.4.3/pep.js"></script>
 
-        <script type="text/javascript" src="JS/Element1.js"></script>
     </head>
 
     <body>
@@ -68,40 +67,26 @@
         <!--Sets up the main body of the page using 2 columns, split into a side and main section-->
         <div class="row">
             <div class="side">
-              <h2>Game Controls and Images</h2>
+              <h2>Game Controls and Elements</h2>
               <p>Here you will find the controls for the game as well as some images showing what has been made.</p>
               <p>►Use the Mouse scroll wheel to zoom in and out.</p>
               <p>►Click and Drag with left mouse button to rotate all around the object.</p>
               <p>►Click and drag with right mouse button to move around the scene in the current camera orientation.</p>
               
-              <a href="WebElem1.html" class="right">Element 1</a>
-              <a href="WebElem2.html" class="right">Element 2</a>
-              <a href="WebElem3.html" class="right">Element 3</a>
-              <a href="WebElem4.html" class="right">Element 4</a>
-              <a href="WebElem5.html" class="right">Element 5</a>
+              <p><a href="WebElem1.html" class="right">Element 1</a></p>
+              <p><a href="WebElem2.html" class="right">Element 2</a></p>
+              <p><a href="WebElem3.html" class="right">Element 3</a></p>
+              <p><a href="WebElem4.html" class="right">Element 4</a></p>
+              <p><a href="WebElem5.html" class="right">Element 5</a></p>
             </div>
             
             <div class="main">
               <h2>Web Game</h2>
               
-              <p>My web games are all created using Javascript, specifically BabylonJS, and are then embedded into the website pages for each of them. 
-              This page highlights the different games I have made for web browsers, and down the left margin is some game images and the controls for the game.</p>
-              <body>
-                <canvas id="renderCanvas"></canvas>
-                <script>
-                    const canvas = document.getElementById("renderCanvas");
-                    const engine = new BABYLON.Engine(canvas, true);
-                    const scene = createScene();
-                    engine.runRenderLoop(function() {
-                        scene.render();
-                    });
-                    window.addEventListener("resize", function() {
-                        engine.resize();
-                    });
-                </script>
-            </body>
+              <p>My web games are all created using Javascript, specifically BabylonJS, and are then embedded into the website pages for each of the elements. 
+              This page highlights the different elements with an image for each, and a list of controls and page links down the left</p>
             </div>
-        </div>
+          </div>
           <!--Creates a footer section at the bottom of the website-->
           <div class="footer">
             <h2>Footer</h2>
