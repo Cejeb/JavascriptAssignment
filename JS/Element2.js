@@ -4,7 +4,6 @@ const createScene =  () => {
     //Set camera and light
     const camera = new BABYLON.ArcRotateCamera("camera", -Math.PI / 2, Math.PI / 2.5, 15, new BABYLON.Vector3(0, 0, 0));
     camera.attachControl(canvas, true);
-
     var light = new BABYLON.HemisphericLight("hemiLight", new BABYLON.Vector3(-1, 1, 0), scene);
 
     
@@ -20,6 +19,12 @@ const createScene =  () => {
 	skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
 	skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
 	skybox.material = skyboxMaterial;
+
+    scene.fogMode = BABYLON.Scene.FOGMODE_EXP;
+    scene.fogDensity = 0.01;
+    scene.fogStart = 20.0;
+    scene.fogEnd = 60.0;
+    scene.fogColor = new BABYLON.Color3(0.9, 0.9, 0.85);
 
     return scene;
 }
