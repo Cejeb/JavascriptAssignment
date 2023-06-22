@@ -12,7 +12,7 @@ function createLight(scene) {
 function createArcRotateCamera(scene) {
     let camAlpha = -Math.PI / 2;
     let camBeta = Math.PI / 2.5;
-    let camDist = 15;
+    let camDist = 25;
     let camTarget = new BABYLON.Vector3(0, 0, 0);
     let camera = new BABYLON.ArcRotateCamera("camera1", camAlpha, camBeta, camDist, camTarget, scene);
     return camera;
