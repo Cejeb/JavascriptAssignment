@@ -9,3 +9,7 @@ engine.runRenderLoop(() => {
     scene.render();
     gui.render();
 });
+
+/*******************************************************
+*  YOU SHOULDN'T NEED TO ADD ANY ADDITIONAL CODE HERE  *
+********************************************************/

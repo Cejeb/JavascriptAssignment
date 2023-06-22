@@ -1,3 +1,8 @@
+/*******************************************************
+* EACH SCENE HAS IT'S FUNCTION THEN THE PREVIOUSLY     *
+* 'BUILDSCENE' IS THE EXPORT FUNCTION AT THE BOTTOM    *
+********************************************************/
+
 var keyDownMap =[];
 
 function importMesh(scene, x, y) {
@@ -31,7 +36,8 @@ function actionManager(scene){
     scene.actionManager.registerAction(
         new BABYLON.ExecuteCodeAction(
             {
-            trigger: BABYLON.ActionManager.OnKeyDownTrigger,      
+            trigger: BABYLON.ActionManager.OnKeyDownTrigger,
+            //parameters: 'w'      
             },
             function(evt) {keyDownMap[evt.sourceEvent.key] = true; }
         )
@@ -46,14 +52,6 @@ function actionManager(scene){
         )
     );
     return scene.actionManager;
-}
-
-function backgroundMusic(scene){
-    let music = new BABYLON.Sound("music", "assets/audio/arcade-kid.mp3", scene, null, {
-        loop: true,
-        autoplay: true
-    });
-    return music;
 }
 
 function createGround(scene){
@@ -73,19 +71,29 @@ function createArcRotateCamera(scene) {
     let camDist = 15;
     let camTarget = new BABYLON.Vector3(0, 0, 0);
     let camera = new BABYLON.ArcRotateCamera("camera1", camAlpha, camBeta, camDist, camTarget, scene);
+    //camera.attachControl(true); // YOU CANNOT ATTACHCONTROL TO CAMERA WITH MULTIPLE SCENES
     return camera;
 }
+
+/**************************************************************************
+* ANY MAIN FUNCTIONS ARE CALLED BEFORE HERE
+* THE EXPORT DEFAULT FUNCTION BELOW REPLACES YOUR PREVIOUSLY CREATESCENE()
+***************************************************************************/
 
 export default function createStartScene(engine) {
     let that = {};
     let scene = (that.scene = new BABYLON.Scene(engine));
+    //scene.debugLayer.show();
+    
+    /********************************************************************
+     * ANY CODE IN RELATION RENDERING ON THE SCREEN SHOULD GO BELOW HERE
+     ********************************************************************/
 
     let light = (that.light = createLight(scene));
     let camera = (that.camera = createArcRotateCamera(scene));
     let ground = (that.ground = createGround(scene));
     let manager = (that.actionManager = actionManager(scene));
     let mesh1   = (that.mesh1 = importMesh(scene, 0, 0));
-    let bgMusic = (that.bgMusic = backgroundMusic(scene));
     
     return that;
 }

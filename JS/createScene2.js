@@ -1,7 +1,13 @@
+/*******************************************************
+* EACH SCENE HAS IT'S FUNCTION THEN THE PREVIOUSLY     *
+* 'BUILDSCENE' IS THE EXPORT FUNCTION AT THE BOTTOM    *
+********************************************************/
+
 var keyDownMap =[];
 
 function importMesh(scene, x, y) {
-    let item = BABYLON.SceneLoader.ImportMesh("", "assets/models/", "dummy3.babylon", scene, function(newMeshes) {
+    let tempItem = { flag: false }
+    let item = BABYLON.SceneLoader.ImportMesh("", "assets/models/", "dummy3.babylon", scene, function(newMeshes, skeletons) {
         let mesh = newMeshes[0];
         scene.onBeforeRenderObservable.add(()=> {
             if (keyDownMap["w"] || keyDownMap["ArrowUp"]) {
@@ -21,7 +27,45 @@ function importMesh(scene, x, y) {
                 mesh.rotation.y = Math.PI / 2;
             }
         });
+
+        scene.actionManager.registerAction(
+            new BABYLON.IncrementValueAction(
+                BABYLON.ActionManager.OnEveryFrameTrigger,
+                mesh,
+                'rotation.y',
+                0.1,
+                new BABYLON.PredicateCondition(
+                    mesh.actionManager,
+                    function () {
+                        return tempItem.flag == true
+                    }
+                )
+            )
+        ); 
+
+        mesh.actionManager = new BABYLON.ActionManager(scene);
+    
+    
+        mesh.actionManager.registerAction(
+            new BABYLON.SetValueAction(
+                BABYLON.ActionManager.OnPickDownTrigger,
+                tempItem,
+                'flag',
+                true
+            )
+        );
+        
+        mesh.actionManager.registerAction(
+            new BABYLON.SetValueAction(
+                BABYLON.ActionManager.OnLongPressTrigger,
+                tempItem,
+                'flag',
+                false
+            )
+        ); 
+
     });
+
     return item
 }    
     
@@ -31,11 +75,13 @@ function actionManager(scene){
     scene.actionManager.registerAction(
         new BABYLON.ExecuteCodeAction(
             {
-            trigger: BABYLON.ActionManager.OnKeyDownTrigger,      
+            trigger: BABYLON.ActionManager.OnKeyDownTrigger,
+            //parameters: 'w'      
             },
             function(evt) {keyDownMap[evt.sourceEvent.key] = true; }
         )
     );
+
     scene.actionManager.registerAction(
         new BABYLON.ExecuteCodeAction(
             {
@@ -44,16 +90,15 @@ function actionManager(scene){
             },
             function(evt) {keyDownMap[evt.sourceEvent.key] = false; }
         )
-    );
+    );   
+
+
     return scene.actionManager;
 }
 
-function backgroundMusic(scene){
-    let music = new BABYLON.Sound("music", "assets/audio/arcade-kid.mp3", scene, null, {
-        loop: true,
-        autoplay: true
-    });
-    return music;
+function addRotation(target, scene){
+
+ /*    */
 }
 
 function createGround(scene){
@@ -73,19 +118,31 @@ function createArcRotateCamera(scene) {
     let camDist = 15;
     let camTarget = new BABYLON.Vector3(0, 0, 0);
     let camera = new BABYLON.ArcRotateCamera("camera1", camAlpha, camBeta, camDist, camTarget, scene);
+    //camera.attachControl(true); // YOU CANNOT ATTACHCONTROL TO CAMERA WITH MULTIPLE SCENES
     return camera;
 }
+
+/**************************************************************************
+* ANY MAIN FUNCTIONS ARE CALLED BEFORE HERE
+* THE EXPORT DEFAULT FUNCTION BELOW REPLACES YOUR PREVIOUSLY CREATESCENE()
+***************************************************************************/
 
 export default function createStartScene(engine) {
     let that = {};
     let scene = (that.scene = new BABYLON.Scene(engine));
+    //scene.debugLayer.show();
+    
+    /********************************************************************
+     * ANY CODE IN RELATION RENDERING ON THE SCREEN SHOULD GO BELOW HERE
+     ********************************************************************/
 
     let light = (that.light = createLight(scene));
     let camera = (that.camera = createArcRotateCamera(scene));
     let ground = (that.ground = createGround(scene));
+    
     let manager = (that.actionManager = actionManager(scene));
-    let mesh1   = (that.mesh1 = importMesh(scene, 0, 0));
-    let bgMusic = (that.bgMusic = backgroundMusic(scene));
+    let mesh1 = (that.mesh1 = importMesh(scene, 0, 0));
+    addRotation(mesh1, scene);    
     
     return that;
 }
