@@ -1,4 +1,4 @@
-import guiScene  from "guiScene.js";
+import guiScene  from "/guiScene.js";
 import {scenes, scene, engine, setSceneIndex}  from "createScenes.js";
 
 setSceneIndex(0);

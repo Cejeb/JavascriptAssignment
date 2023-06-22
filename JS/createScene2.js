@@ -1,106 +1,3 @@
-/*******************************************************
-* EACH SCENE HAS IT'S FUNCTION THEN THE PREVIOUSLY     *
-* 'BUILDSCENE' IS THE EXPORT FUNCTION AT THE BOTTOM    *
-********************************************************/
-
-var keyDownMap =[];
-
-function importMesh(scene, x, y) {
-    let tempItem = { flag: false }
-    let item = BABYLON.SceneLoader.ImportMesh("", "assets/models/", "dummy3.babylon", scene, function(newMeshes, skeletons) {
-        let mesh = newMeshes[0];
-        scene.onBeforeRenderObservable.add(()=> {
-            if (keyDownMap["w"] || keyDownMap["ArrowUp"]) {
-                mesh.position.z += 0.1;
-                mesh.rotation.y = 0;
-            }
-            if (keyDownMap["a"] || keyDownMap["ArrowLeft"]) {
-                mesh.position.x -= 0.1;
-                mesh.rotation.y = 3 * Math.PI / 2;
-            }
-            if (keyDownMap["s"] || keyDownMap["ArrowDown"]) {
-                mesh.position.z -= 0.1;
-                mesh.rotation.y = 2 * Math.PI / 2;
-            }
-            if (keyDownMap["d"] || keyDownMap["ArrowRight"]) {
-                mesh.position.x += 0.1;
-                mesh.rotation.y = Math.PI / 2;
-            }
-        });
-
-        scene.actionManager.registerAction(
-            new BABYLON.IncrementValueAction(
-                BABYLON.ActionManager.OnEveryFrameTrigger,
-                mesh,
-                'rotation.y',
-                0.1,
-                new BABYLON.PredicateCondition(
-                    mesh.actionManager,
-                    function () {
-                        return tempItem.flag == true
-                    }
-                )
-            )
-        ); 
-
-        mesh.actionManager = new BABYLON.ActionManager(scene);
-    
-    
-        mesh.actionManager.registerAction(
-            new BABYLON.SetValueAction(
-                BABYLON.ActionManager.OnPickDownTrigger,
-                tempItem,
-                'flag',
-                true
-            )
-        );
-        
-        mesh.actionManager.registerAction(
-            new BABYLON.SetValueAction(
-                BABYLON.ActionManager.OnLongPressTrigger,
-                tempItem,
-                'flag',
-                false
-            )
-        ); 
-
-    });
-
-    return item
-}    
-    
-function actionManager(scene){
-    scene.actionManager = new BABYLON.ActionManager(scene);
-
-    scene.actionManager.registerAction(
-        new BABYLON.ExecuteCodeAction(
-            {
-            trigger: BABYLON.ActionManager.OnKeyDownTrigger,
-            //parameters: 'w'      
-            },
-            function(evt) {keyDownMap[evt.sourceEvent.key] = true; }
-        )
-    );
-
-    scene.actionManager.registerAction(
-        new BABYLON.ExecuteCodeAction(
-            {
-            trigger: BABYLON.ActionManager.OnKeyUpTrigger
-            
-            },
-            function(evt) {keyDownMap[evt.sourceEvent.key] = false; }
-        )
-    );   
-
-
-    return scene.actionManager;
-}
-
-function addRotation(target, scene){
-
- /*    */
-}
-
 function createGround(scene){
     const ground = BABYLON.MeshBuilder.CreateGround("ground", {height: 10, width: 10, subdivisions: 4});
     return ground;
@@ -118,31 +15,53 @@ function createArcRotateCamera(scene) {
     let camDist = 15;
     let camTarget = new BABYLON.Vector3(0, 0, 0);
     let camera = new BABYLON.ArcRotateCamera("camera1", camAlpha, camBeta, camDist, camTarget, scene);
-    //camera.attachControl(true); // YOU CANNOT ATTACHCONTROL TO CAMERA WITH MULTIPLE SCENES
     return camera;
 }
-
-/**************************************************************************
-* ANY MAIN FUNCTIONS ARE CALLED BEFORE HERE
-* THE EXPORT DEFAULT FUNCTION BELOW REPLACES YOUR PREVIOUSLY CREATESCENE()
-***************************************************************************/
 
 export default function createStartScene(engine) {
     let that = {};
     let scene = (that.scene = new BABYLON.Scene(engine));
-    //scene.debugLayer.show();
-    
-    /********************************************************************
-     * ANY CODE IN RELATION RENDERING ON THE SCREEN SHOULD GO BELOW HERE
-     ********************************************************************/
-
     let light = (that.light = createLight(scene));
     let camera = (that.camera = createArcRotateCamera(scene));
-    let ground = (that.ground = createGround(scene));
-    
-    let manager = (that.actionManager = actionManager(scene));
-    let mesh1 = (that.mesh1 = importMesh(scene, 0, 0));
-    addRotation(mesh1, scene);    
-    
+    let ground = (that.ground = buildGround(scene));
+    let skybox = (that.skybox = buildSkybox(scene));
     return that;
+}
+
+function buildSkybox(scene) {
+    //Creates the skybox. For some reason placing this inside a function like the ground causes errors...
+	var skybox = BABYLON.MeshBuilder.CreateBox("skyBox", {size:1000.0}, scene);
+	var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
+	skyboxMaterial.backFaceCulling = false;
+	skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("assets/skybox/skybox", scene);
+	skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
+	skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
+	skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+	skybox.material = skyboxMaterial;
+
+    scene.fogMode = BABYLON.Scene.FOGMODE_EXP;
+    scene.fogDensity = 0.01;
+    scene.fogStart = 20.0;
+    scene.fogEnd = 60.0;
+    scene.fogColor = new BABYLON.Color3(0.9, 0.9, 0.85);
+    return skybox;
+}
+
+const buildGround = () => {
+    //Create Village ground
+    const groundMat = new BABYLON.StandardMaterial("groundMat");
+    groundMat.diffuseTexture = new BABYLON.Texture("https://assets.babylonjs.com/environments/valleygrass.png");
+    groundMat.diffuseTexture.hasAlpha = true;
+
+    const ground = BABYLON.MeshBuilder.CreateGround("ground", {width:24, height:24});
+    ground.material = groundMat;
+
+    //large ground
+    const largeGroundMat = new BABYLON.StandardMaterial("largeGroundMat");
+    largeGroundMat.diffuseTexture = new BABYLON.Texture("https://assets.babylonjs.com/environments/valleygrass.png");
+
+    const largeGround = BABYLON.MeshBuilder.CreateGroundFromHeightMap("largeGround", "https://assets.babylonjs.com/environments/villageheightmap.png", 
+        {width:150, height:150, subdivisions: 20, minHeight:0, maxHeight: 4});
+    largeGround.material = largeGroundMat;
+    largeGround.position.y = -0.01;
 }

@@ -1,5 +1,5 @@
-import guiScene  from "guiScene.js";
-import {scenes, scene, engine, setSceneIndex}  from "createScenes.js";
+import guiScene  from "./guiScene.js";
+import {scenes, scene, engine, setSceneIndex}  from "./createScenes.js";
 
 setSceneIndex(0);
 
@@ -10,6 +10,3 @@ engine.runRenderLoop(() => {
     gui.render();
 });
 
-/*******************************************************
-*  YOU SHOULDN'T NEED TO ADD ANY ADDITIONAL CODE HERE  *
-********************************************************/

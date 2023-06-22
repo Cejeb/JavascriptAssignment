@@ -1,4 +1,4 @@
-import {setSceneIndex}        from "JS/createScenes.js";
+import {setSceneIndex}        from "./createScenes.js";
 
 function createSceneButton(name, index, x,y, advtex){
     var button = BABYLON.GUI.Button.CreateSimpleButton(name, index);
@@ -23,10 +23,10 @@ export default function guiScene(engine) {
 
     var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("myUI",true);
 
-    var button1 = createSceneButton("but1", 1,"-100px", "120px", advancedTexture);
-    var button2 = createSceneButton("but2", 2,"000px", "120px", advancedTexture);
-    var button3 = createSceneButton("but3", 3,"100px", "120px", advancedTexture);
-     
-    //guiScene.debugLayer.show();
+    var button1 = createSceneButton("but1", 1,"-200px", "120px", advancedTexture);
+    var button2 = createSceneButton("but2", 2,"-100px", "120px", advancedTexture);
+    var button3 = createSceneButton("but3", 3,"000px", "120px", advancedTexture);
+    var button4 = createSceneButton("but4", 4,"100px", "120px", advancedTexture);
+    var button5 = createSceneButton("but5", 5,"200px", "120px", advancedTexture);
     return guiScene;
 }    
